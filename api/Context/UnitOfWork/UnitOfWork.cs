@@ -1,5 +1,7 @@
 using System.Data;
 using api.Repositories;
+using api.Repositories.UserRepository;
+using api.Services.Account;
 using Microsoft.Data.Sqlite;
 
 namespace api.Context.UnitOfWork
@@ -9,14 +11,16 @@ namespace api.Context.UnitOfWork
         private readonly IDbConnection _connection;
         private IDbTransaction? _transaction;
         public IPostsRepository PostsRepository { get; private set; }
+        public IUsersRepository UsersRepository { get; private set; }
 
-        public UnitOfWork(IConfiguration configuration)
+        public UnitOfWork(IConfiguration configuration, IPasswordService passwordService)
         {
             _connection = new SqliteConnection(configuration.GetConnectionString("SqlConnection"));
             _connection.Open();
             _transaction = _connection.BeginTransaction();
 
             PostsRepository = new PostsRepository(_connection);
+            UsersRepository = new UsersRepository(_connection, passwordService);
         }
 
         public void CommitTransaction()

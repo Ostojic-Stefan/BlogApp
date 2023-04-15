@@ -6,9 +6,9 @@ namespace api.Services
 {
     public class PostsService : IPostsService
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PostsService> _logger;
-        public PostsService(UnitOfWork unitOfWork, ILogger<PostsService> logger)
+        public PostsService(IUnitOfWork unitOfWork, ILogger<PostsService> logger)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
