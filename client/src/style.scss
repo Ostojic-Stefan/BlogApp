@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100;200;300;400;500;600;700&display=swap');
+
+$lightColor:#f0faea;
+$medColor: #c4dbc9;
+$mainColor: #52796f;
+$darkColor: #354f52;
+$darkerColor: #2f3e46;
+
+html {
+    font-family: Anuphan, sans-serif;
+    background-color: $lightColor;
+}
+
+main {
+    height: 100vh;
+    width: 1200px;
+    margin: 0 auto;
+}
+
+nav {
+    color: #fff;
+    background-color: $darkColor;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+
+    .creds {
+        display: flex;
+        gap: 30px;
+    }
+}
+
+
+// Article
+article {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+// Single article
+
+.single-article {
+    background-color: $medColor;
+    display: flex;
+    border-radius: 10px;
+    align-items: center;
+    overflow: hidden;
+
+    img {
+        max-width: 100%;
+        height: 100%;
+    }
+
+    h2 {
+        margin: 0;
+    }
+
+    .text-content {
+        text-align: center;
+        padding: 10px 20px;
+    }
+
+    button {
+        background-color: $darkColor;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: background-color 0.1s ease;
+
+        &:hover {
+            background-color: #fff;
+            color: $darkColor;
+
+
+        }
+    }
+}
