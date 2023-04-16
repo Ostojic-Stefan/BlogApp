@@ -1,5 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using api.Dtos.Account;
+using api.Extensions;
 using api.Services.Account;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,42 +23,46 @@ namespace api.Controllers
         public async Task<IActionResult> Register(UserRegisterDto userRegiserDto)
         {
             await _accountService.Register(userRegiserDto);
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
-            try
+            var response = await _accountService.Login(userLoginDto);
+            if (!response.Success)
             {
-                var token = await _accountService.Login(userLoginDto);
-                var cookieOptions = new CookieOptions
+                return BadRequest(new ProblemDetails
                 {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Lax
-                };
-                Response.Cookies.Append(_config["AuthOptions:AuthCookieName"], token, cookieOptions);
-                return Ok(token);
+                    Detail = response.Message,
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Title = "Duplicate Entry",
+                    Type = "Duplicate Entry"
+                });
             }
-            catch
+            var cookieOptions = new CookieOptions
             {
-                throw;
-            }
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax
+            };
+            Response.Cookies.Append(_config["AuthOptions:AuthCookieName"], response.Data, cookieOptions);
+            return NoContent();
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _accountService.Logout();
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet("me")]
         public async Task<IActionResult> Me()
         {
-            var user = User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.NameId);
-            return Ok();
+            var userId = User.GetUserId();
+            var user = await _accountService.GetAccountById(userId);
+            return Ok(user.Data);
         }
     }
 }

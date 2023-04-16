@@ -1,8 +1,8 @@
 using System.Text;
 using api.Context.UnitOfWork;
 using api.Middleware;
-using api.Services;
 using api.Services.Account;
+using api.Services.Posts;
 using api.Services.Token;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +16,8 @@ namespace api.Extensions
             service.AddControllers();
             service.AddEndpointsApiExplorer();
             service.AddSwaggerGen();
+            service.AddHttpContextAccessor();
+
             service.AddAuthentication()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {

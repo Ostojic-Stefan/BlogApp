@@ -1,6 +1,6 @@
 using System.Net;
 using api.Dtos;
-using api.Services;
+using api.Services.Posts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -9,9 +9,9 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class PostsController : ControllerBase
     {
-        private readonly PostsService _service;
+        private readonly IPostsService _service;
 
-        public PostsController(PostsService service)
+        public PostsController(IPostsService service)
         {
             _service = service;
         }
@@ -19,14 +19,15 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPosts()
         {
-            return Ok(await _service.GetAllPostsAsync());
+            var response = await _service.GetAllPosts();
+            return Ok(response.Data);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPost(int id)
         {
-            var post = await _service.GetPost(id);
-            if (post is null)
+            var response = await _service.GetPost(id);
+            if (!response.Success && response.Message == "Not Found")
             {
                 return NotFound(new ProblemDetails
                 {
@@ -36,7 +37,7 @@ namespace api.Controllers
                     Type = "Post not found",
                 });
             }
-            return Ok(post);
+            return Ok(response.Data);
         }
 
         [HttpPost]
@@ -52,6 +53,5 @@ namespace api.Controllers
             await _service.DeletePost(id);
             return NoContent();
         }
-
     }
 }

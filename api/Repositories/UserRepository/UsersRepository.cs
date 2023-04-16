@@ -48,5 +48,13 @@ namespace api.Repositories.UserRepository
             parameters.Add("email", userRegisterDto.Email);
             return await _connection.QueryFirstOrDefaultAsync<User>(sql, parameters);
         }
+
+        public async Task<User?> GetUsersById(int id)
+        {
+            var sql = "SELECT username, email FROM users WHERE id = @id";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id);
+            return await _connection.QueryFirstOrDefaultAsync<User>(sql, parameters);
+        }
     }
 }

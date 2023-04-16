@@ -1,5 +1,5 @@
 using System.Data;
-using api.Repositories;
+using api.Repositories.PostsRepository;
 using api.Repositories.UserRepository;
 using api.Services.Account;
 using Microsoft.Data.Sqlite;

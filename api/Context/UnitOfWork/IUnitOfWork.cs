@@ -1,4 +1,4 @@
-using api.Repositories;
+using api.Repositories.PostsRepository;
 using api.Repositories.UserRepository;
 
 namespace api.Context.UnitOfWork

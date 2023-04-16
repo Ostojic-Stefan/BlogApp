@@ -1,9 +1,10 @@
 using System.Data;
 using api.Dtos;
+using api.Dtos.Post;
 using api.Models;
 using Dapper;
 
-namespace api.Repositories
+namespace api.Repositories.PostsRepository
 {
     public class PostsRepository : IPostsRepository
     {
@@ -40,19 +41,19 @@ namespace api.Repositories
             await _connection.ExecuteAsync(sql, parameters);
         }
 
-        public async Task<IEnumerable<Post>> GetAllPosts()
+        public async Task<IEnumerable<PostResponseDto>> GetAllPosts()
         {
-            var sql = "SELECT * FROM posts";
-            var posts = await _connection.QueryAsync<Post>(sql);
+            var sql = "SELECT title, body, username FROM posts JOIN users ON users.id = posts.userid";
+            var posts = await _connection.QueryAsync<PostResponseDto>(sql);
             return posts;
         }
 
-        public async Task<Post?> GetPost(int id)
+        public async Task<PostResponseDto?> GetPost(int id)
         {
-            var sql = "SELECT * FROM posts WHERE id = @id";
+            var sql = "SELECT * FROM posts WHERE id = @id JOIN users ON users.id = posts.userid";
             var parameters = new DynamicParameters();
             parameters.Add("id", id, DbType.Int32);
-            var post = await _connection.QuerySingleOrDefaultAsync<Post>(sql, parameters);
+            var post = await _connection.QuerySingleOrDefaultAsync<PostResponseDto>(sql, parameters);
             return post;
         }
     }
