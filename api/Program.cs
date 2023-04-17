@@ -15,6 +15,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
+app.UseCors(
+    options => options.AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials()
+    .WithOrigins("http://localhost:3000")
+);
+
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();

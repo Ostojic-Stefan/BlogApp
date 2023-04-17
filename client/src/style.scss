@@ -1,14 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100;200;300;400;500;600;700&display=swap');
 
-$lightColor:#f0faea;
-$medColor: #c4dbc9;
+$lightColor:#f4feed;
+$medColor: #dcece0;
 $mainColor: #52796f;
 $darkColor: #354f52;
 $darkerColor: #2f3e46;
 
 html {
     font-family: Anuphan, sans-serif;
-    background-color: $lightColor;
 }
 
 main {
@@ -77,8 +76,58 @@ article {
         &:hover {
             background-color: #fff;
             color: $darkColor;
-
-
         }
     }
+}
+
+.auth {
+    display: flex;
+    height: 80vh;
+    justify-content: center;
+    align-items: center;
+
+    form {
+        padding: 50px 50px;
+        background-color: $medColor;
+        border-bottom: 5px solid $darkColor;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+
+        .form-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+
+            input {
+                border: none;
+                border-bottom: 1px solid $darkerColor;
+                background-color: inherit;
+                font-size: 20px;
+                outline: none;
+            }
+        }
+
+        button {
+            width: fit-content;
+            font-size: 20px;
+            margin-top: 30px;
+            border: none;
+            background-color: $darkColor;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+
+            &:hover {
+                background-color: #fff;
+                color: $darkColor;
+            }
+        }
+    }
+
+
 }

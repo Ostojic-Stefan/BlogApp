@@ -18,6 +18,7 @@ namespace api.Extensions
             service.AddEndpointsApiExplorer();
             service.AddSwaggerGen();
             service.AddHttpContextAccessor();
+            service.AddCors();
 
             service.AddAuthentication()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
