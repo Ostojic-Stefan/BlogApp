@@ -2,6 +2,7 @@ using api.Context.UnitOfWork;
 using api.Dtos;
 using api.Dtos.Post;
 using api.Models;
+using api.Services.Image;
 
 namespace api.Services.Posts
 {
@@ -9,15 +10,22 @@ namespace api.Services.Posts
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PostsService> _logger;
-        public PostsService(IUnitOfWork unitOfWork, ILogger<PostsService> logger)
+        private readonly IImageService _imageService;
+        public PostsService(IUnitOfWork unitOfWork, IImageService imageService, ILogger<PostsService> logger)
         {
+            _imageService = imageService;
             _logger = logger;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ServiceResponse<IEnumerable<PostResponseDto>>> GetAllPosts()
+        public async Task<ServiceResponse<IEnumerable<PostResponseDto>>> GetAllPosts(int userId)
         {
-            var posts = await _unitOfWork.PostsRepository.GetAllPosts();
+            var posts = userId switch
+            {
+                0 => await _unitOfWork.PostsRepository.GetAllPosts(),
+                _ => await _unitOfWork.PostsRepository.GetAllPosts(userId)
+            };
+
             return new ServiceResponse<IEnumerable<PostResponseDto>>
             {
                 Data = posts
@@ -38,9 +46,27 @@ namespace api.Services.Posts
             return response;
         }
 
-        public async Task<Post> AddPost(AddPostDto addPostDto)
+        public async Task<Post> AddPost(int currentUserId, AddPostDto addPostDto)
         {
-            var post = await _unitOfWork.PostsRepository.AddPost(addPostDto);
+            var imageData = new ImageData
+            {
+                FileName = addPostDto.Image.FileName,
+                ContentType = addPostDto.Image.ContentType,
+                Stream = addPostDto.Image.OpenReadStream()
+            };
+
+            ImageResult result = await _imageService.SaveImageAsync(imageData);
+
+            var post = new Post
+            {
+                Title = addPostDto.Title,
+                Body = addPostDto.Body,
+                ImageUrl = result.WebRequestPath,
+                UserId = currentUserId
+            };
+
+            var createdPost = await _unitOfWork.PostsRepository.AddPost(post);
+
             _unitOfWork.CommitTransaction();
             return post;
         }

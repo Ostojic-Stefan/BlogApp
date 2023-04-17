@@ -2,6 +2,7 @@ using System.Text;
 using api.Context.UnitOfWork;
 using api.Middleware;
 using api.Services.Account;
+using api.Services.Image;
 using api.Services.Posts;
 using api.Services.Token;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,7 +52,8 @@ namespace api.Extensions
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IPostsService, PostsService>()
                 .AddScoped<IAccountService, AccountService>()
-                .AddTransient<IPasswordService, PasswordService>();
+                .AddTransient<IPasswordService, PasswordService>()
+                .AddTransient<IImageService, ImageService>();
 
             return service;
         }

@@ -1,5 +1,6 @@
 using System.Net;
 using api.Dtos;
+using api.Extensions;
 using api.Services.Posts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts()
+        public async Task<IActionResult> GetPosts(int userId)
         {
-            var response = await _service.GetAllPosts();
+            var response = await _service.GetAllPosts(userId);
             return Ok(response.Data);
         }
 
@@ -41,9 +42,10 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPost(AddPostDto addPostDto)
+        public async Task<IActionResult> AddPost([FromForm] AddPostDto addPostDto)
         {
-            var post = await _service.AddPost(addPostDto);
+            var currentUserId = User.GetUserId();
+            var post = await _service.AddPost(currentUserId, addPostDto);
             return Ok(post);
         }
 

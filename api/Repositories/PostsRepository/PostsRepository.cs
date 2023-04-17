@@ -15,21 +15,24 @@ namespace api.Repositories.PostsRepository
             _connection = connection;
         }
 
-        public async Task<Post> AddPost(AddPostDto addPostDto)
+        public async Task<Post> AddPost(Post post)
         {
-            var sql = "INSERT INTO posts (title, body) VALUES (@title, @body); SELECT last_insert_rowid()";
+            var sql = "INSERT INTO posts (title, body, imageUrl, userId) VALUES (@title, @body, @imageUrl, @userId); SELECT last_insert_rowid()";
 
             var parameters = new DynamicParameters();
-            parameters.Add("title", addPostDto.Title, DbType.String);
-            parameters.Add("body", addPostDto.Body, DbType.String);
+            parameters.Add("title", post.Title, DbType.String);
+            parameters.Add("body", post.Body, DbType.String);
+            parameters.Add("imageUrl", post.ImageUrl, DbType.String);
+            parameters.Add("userId", post.UserId, DbType.Int32);
 
             var createdPostId = await _connection.QuerySingleAsync<int>(sql, parameters);
 
             return new Post
             {
-                Title = addPostDto.Title,
-                Body = addPostDto.Body,
                 Id = createdPostId,
+                Title = post.Title,
+                Body = post.Body,
+                ImageUrl = post.ImageUrl
             };
         }
 
@@ -39,6 +42,15 @@ namespace api.Repositories.PostsRepository
             var parameters = new DynamicParameters();
             parameters.Add("id", id, DbType.Int32);
             await _connection.ExecuteAsync(sql, parameters);
+        }
+
+        public async Task<IEnumerable<PostResponseDto>> GetAllPosts(int userId)
+        {
+            var sql = "SELECT title, body, username FROM posts JOIN users ON users.id = posts.userid WHERE userId = @userId";
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId, DbType.Int32);
+            var posts = await _connection.QueryAsync<PostResponseDto>(sql, parameters);
+            return posts;
         }
 
         public async Task<IEnumerable<PostResponseDto>> GetAllPosts()
